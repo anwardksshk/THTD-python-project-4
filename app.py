@@ -35,12 +35,12 @@ def initialize():
                 Product.create(product_name=value['product_name'], 
                             product_price=format_int(value['product_price']),
                             product_quantity=int(value['product_quantity']),
-                            date_updated=datetime.datetime.strptime(value['date_updated'], '%m/%d/%Y'))
+                            date_updated=datetime.datetime.strptime(value['date_updated'], '%m/%d/%Y').date())
             except IntegrityError:
                 product_record = Product.get(product_name=value['product_name'])
                 product_record.product_price = format_int(value['product_price'])
                 product_record.product_quantity = int(value['product_quantity'])
-                product_record.date_updated = datetime.datetime.strptime(value['date_updated'], '%m/%d/%Y')
+                product_record.date_updated = datetime.datetime.strptime(value['date_updated'], '%m/%d/%Y').date()
                 product_record.save()
 
 
@@ -101,7 +101,7 @@ def view_product():
                 "Item: {}\n".format(product.product_name) +
                 "Price: {}\n".format(as_currency(product.product_price)) +
                 "Quantity: {}\n".format(product.product_quantity) +
-                "Last updated: {}\n".format(product.date_updated)
+                "Last updated: {}\n".format(product.date_updated.date().strftime("%d %B %Y"))
             ) 
 
             view_again = input("\nWould you like to view another product? (Y/N) ")
@@ -140,7 +140,7 @@ def add_product():
             product_quantity = int(product_quantity)
             break 
 
-    date_added = datetime.datetime.now().strftime('%d/%m/%Y')
+    date_added = datetime.datetime.now().date()
 
     confirm = input("Add product? (Y/N) ")
     if confirm.lower() == 'y':
@@ -175,7 +175,7 @@ def backup():
                 'product_name': "{}".format(product.product_name),
                 'product_price': "{}".format(as_currency(product.product_price)),
                 'product_quantity': "{}".format(product.product_quantity),
-                'date_updated': "{}".format(product.date_updated)
+                'date_updated': "{}".format(product.date_updated.date().strftime("%m/%d/%Y"))
             })
 
     print("BACKUP COMPLETE!")
