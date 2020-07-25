@@ -120,13 +120,7 @@ def add_product():
     while True: #get product price in the correct format
         try: 
             product_price = input("Product Price: $")
-            if "." in product_price:
-                if (len(product_price.split(".", 1)[1]) < 2 or 
-                    len(product_price.split(".", 1)[0]) == 0 or 
-                    product_price.count(".") > 1 or
-                    re.search(r'[a-zA-Z]', product_price)): #if price in the form of $2.3 or .3 or .32 or 2. or 2.32.22 or 2.32asd
-                    raise ValueError("Please enter in the $x.xx format.")
-            elif "." not in product_price: #if $2 or $200 or $30
+            if re.fullmatch(r'\d+.\d{2}', product_price) == None: #if price in the form of $2.3 or .3 or .32 or 2. or 2.32.22 or 2.32asd or 20/200etc
                 raise ValueError("Please enter in the $x.xx format.")
         except ValueError as err:
             print("{}".format(err))
@@ -134,7 +128,7 @@ def add_product():
             product_price = format_int(product_price)
             break 
     
-    while True: #get product quantity only numbers
+    while True: #get product quantity in only numbers
         try:
             product_quantity = int(input("Quantity: "))
         except ValueError:
