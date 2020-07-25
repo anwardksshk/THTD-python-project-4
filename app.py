@@ -92,7 +92,9 @@ def view_product():
             query = int(input("Look for product ID: "))
             product = Product.get(Product.product_id == query)
         except DoesNotExist:
-            print("No item with an ID of {} exists, please enter a valid ID".format(query))
+            print("No item with an ID of {} exists, please enter a valid product ID".format(query))
+        except ValueError:
+            print("Please enter a correct product ID.")
         else:
             clear()
 
@@ -119,7 +121,10 @@ def add_product():
         try: 
             product_price = input("Product Price: $")
             if "." in product_price:
-                if len(product_price.split(".", 1)[1]) < 2 or len(product_price.split(".", 1)[0]) == 0: #if price in the form of $2.3 or .3 or .32 or 2.
+                if (len(product_price.split(".", 1)[1]) < 2 or 
+                    len(product_price.split(".", 1)[0]) == 0 or 
+                    product_price.count(".") > 1 or
+                    re.search(r'[a-zA-Z]', product_price)): #if price in the form of $2.3 or .3 or .32 or 2. or 2.32.22 or 2.32asd
                     raise ValueError("Please enter in the $x.xx format.")
             elif "." not in product_price: #if $2 or $200 or $30
                 raise ValueError("Please enter in the $x.xx format.")
@@ -131,13 +136,10 @@ def add_product():
     
     while True: #get product quantity only numbers
         try:
-            product_quantity = input("Quantity: ")
-            if re.search(r'[\D]', product_quantity):
-                raise ValueError("Please only key in a number value.")
-        except ValueError as err:
-            print("{}".format(err))
+            product_quantity = int(input("Quantity: "))
+        except ValueError:
+            print("Please only key in a number value.")
         else:
-            product_quantity = int(product_quantity)
             break 
 
     date_added = datetime.datetime.now().date()
